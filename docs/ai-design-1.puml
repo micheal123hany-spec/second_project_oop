@@ -1,0 +1,80 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class Menu {
+  - machine : Machine
+  + start()
+  + showMainMenu()
+  + loadProgram()
+  + editCellOrRegister()
+  + chooseRunMode()
+  + displayState()
+  + askExitOrLoad()
+}
+
+class Machine {
+  - cpu : CPU
+  - memory : Memory
+  + loadProgram(file, start) : bool
+  + setCell(addr, value)
+  + setRegister(i, value)
+  + runAll()
+  + runStep()
+  + getCpu() : CPU
+  + getMemory() : Memory
+}
+
+class CPU {
+  - pc : int
+  - ir : Instruction
+  - registers : int[16]
+  - screenOutput : string
+  - halted : bool
+  - memory : Memory
+  + fetch()
+  + step()
+  + reset(start)
+  + getRegister(i) : int
+  + setRegister(i, v)
+  + getPc() : int
+  + setPc(addr)
+  + getIr() : string
+  + halt()
+  + appendOutput(v)
+  + getScreenOutput() : string
+}
+
+class Memory {
+  - cells : int[256]
+  + read(addr) : int
+  + write(addr, v)
+  + load(prog, start) : bool
+}
+
+class Instruction {
+  - raw : string
+  - opcode : char
+  - r, s, t : char
+  - xy : int
+  + isValid() : bool
+  + decode()
+  + execute(cpu, memory)
+  + toString() : string
+}
+
+class ALU {
+  + addTwos(a, b) : int
+  + addFloat(a, b) : int
+  + bitOr(a, b) : int
+  + bitAnd(a, b) : int
+  + bitXor(a, b) : int
+  + rotate(v, n) : int
+}
+
+Menu --> Machine
+Machine *-- CPU
+Machine *-- Memory
+CPU --> Instruction : ir
+Instruction ..> ALU : uses
+@enduml
